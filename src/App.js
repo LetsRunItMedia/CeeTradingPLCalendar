@@ -62,22 +62,31 @@ function App() {
           </tr>
         </thead>
         <tbody>
-  {Array.from({length:3},(_,row)=>{
-    return <tr key={row}>
-      {Array.from({length:10},(_,col)=>{
-        const dayNum = row*10 + col + 1;
-        if(dayNum > daysInMonth) return <td key={col} className="border border-gray-400 w-20 h-16"></td>;
+  {Array.from({ length: 6 }, (_, week) => (
+    <tr key={week}>
+      {Array.from({ length: 7 }, (_, dow) => {
+        // Calculate the correct day number based on start day
+        const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0 = Sun, 1 = Mon
+        const dayNum = week * 7 + dow - (firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1) + 1;
+
+        if (dayNum < 1 || dayNum > daysInMonth)
+          return <td key={dow} className="border border-gray-400 w-20 h-16"></td>;
+
         const pl = getPL(dayNum);
-        const bg = pl==null ? '' : pl>=0 ? 'bg-green-600/30' : 'bg-red-600/30';
+        const bg = pl == null ? '' : pl >= 0 ? 'bg-green-600/30' : 'bg-red-600/30';
+
         return (
-          <td key={col} className={`border border-gray-400 w-20 h-16 cursor-pointer ${bg} flex items-center justify-center`}
-              onClick={()=>handlePLChange(dayNum)}>
-            {pl!=null ? (pl>=0?'+':'')+'$'+pl.toFixed(2) : dayNum}
+          <td
+            key={dow}
+            className={`border border-gray-400 w-20 h-16 cursor-pointer ${bg} flex items-center justify-center`}
+            onClick={() => handlePLChange(dayNum)}
+          >
+            {pl != null ? (pl >= 0 ? '+' : '') + '$' + pl.toFixed(2) : dayNum}
           </td>
-        )
+        );
       })}
     </tr>
-  })}
+  ))}
 </tbody>
       </table>
     </div>
@@ -85,4 +94,5 @@ function App() {
 }
 
 export default App;
+
 
